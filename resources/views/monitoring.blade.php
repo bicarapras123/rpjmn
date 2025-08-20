@@ -53,26 +53,30 @@
                 {{-- Tabel --}}
                 <div class="overflow-x-auto">
                     <table class="w-full border text-sm text-left text-gray-700">
-                        <thead class="bg-blue-900 text-white text-center">
-                            <tr>
-                                <th class="px-4 py-2 border">No</th>
-                                <th class="px-4 py-2 border">Indikator</th>
-                                <th class="px-4 py-2 border">Direktorat</th>
-                                <th class="px-4 py-2 border">KL Pelaksana</th>
-                                <th class="px-4 py-2 border">Baseline</th>
-                                <th class="px-4 py-2 border">2019</th>
-                                <th class="px-4 py-2 border">2020</th>
-                                <th class="px-4 py-2 border">2021</th>
-                                <th class="px-4 py-2 border">2022</th>
-                                <th class="px-4 py-2 border">Target</th>
-                                @if (Auth::user()->role === 'admin')
-                                    <th class="px-4 py-2 border aksi-col no-print">Aksi</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
+                    <thead class="bg-blue-900 text-white text-center">
+    <tr>
+        <th class="px-4 py-2 border">No</th>
+        <th class="px-4 py-2 border">Indikator</th>
+        <th class="px-4 py-2 border">Direktorat</th>
+        <th class="px-4 py-2 border">KL Pelaksana</th>
+        <th class="px-4 py-2 border">Baseline</th>
+        <th class="px-4 py-2 border">2019</th>
+        <th class="px-4 py-2 border">2020</th>
+        <th class="px-4 py-2 border">2021</th>
+        <th class="px-4 py-2 border">2022</th>
+        <th class="px-4 py-2 border">Target</th>
+        @if (Auth::user()->role === 'admin' || Auth::user()->role === 'moderator')
+            <th class="px-4 py-2 border aksi-col no-print">Aksi</th>
+        @endif
+    </tr>
+</thead>
+<tbody>
     @forelse($indikators as $item)
-        <tr class="text-center">
+        <tr class="text-center 
+            @if($item->status === 'approved') bg-green-200 
+            @elseif($item->status === 'rejected') bg-red-200 
+            @endif">
+            
             <td class="border px-2 py-1">{{ $loop->iteration }}</td>
             <td class="border px-2 py-1">{{ $item->indikator }}</td>
             <td class="border px-2 py-1">{{ $item->direktorat }}</td>
@@ -84,15 +88,42 @@
             <td class="border px-2 py-1">{{ $item->tahun_2022 }}</td>
             <td class="border px-2 py-1">{{ $item->target }}</td>
 
+            {{-- Tombol Moderator --}}
+            @if(Auth::user()->role === 'moderator')
+                <td class="border px-2 py-1 aksi-col no-print">
+                    <form action="{{ route('monitoring.setStatus', [$item->id, 'approved']) }}" method="POST" class="inline-block">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded">✔</button>
+                    </form>
+
+                    <form action="{{ route('monitoring.setStatus', [$item->id, 'rejected']) }}" method="POST" class="inline-block">
+                        @csrf
+                        @method('PUT')
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded">✖</button>
+                    </form>
+                </td>
+            @endif
+            
+            {{-- ✅ Legend Warna --}}
+            <div class="mb-4 p-3 bg-gray-100 rounded shadow text-sm">
+                <span class="inline-block w-4 h-4 bg-green-200 border mr-2"></span> 
+                <span class="mr-4">Approved (Tercapai / Disetujui)</span>
+
+                <span class="inline-block w-4 h-4 bg-red-200 border mr-2"></span> 
+                <span class="mr-4">Rejected (Tidak Tercapai / Ditolak)</span>
+
+                <span class="inline-block w-4 h-4 bg-white border mr-2"></span> 
+                <span>Belum divalidasi</span>
+            </div>
+
+            {{-- Tombol Admin (edit & hapus) --}}
             @if(Auth::user()->role === 'admin')
                 <td class="border px-2 py-1 aksi-col no-print">
-                    {{-- Tombol Edit --}}
                     <a href="{{ route('monitoring.edit', $item->id) }}"
                        class="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded mr-1">
                         Edit
                     </a>
-
-                    {{-- Tombol Hapus --}}
                     <form action="{{ route('monitoring.destroy', $item->id) }}"
                           method="POST"
                           class="inline-block"
@@ -113,7 +144,6 @@
         </tr>
     @endforelse
 </tbody>
-
 
                 {{-- Modal Tambah Monitoring --}}
                 @if(Auth::user()->role === 'admin')

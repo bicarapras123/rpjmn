@@ -62,7 +62,12 @@ class IndikatorController extends Controller
         $monitoring->delete();
         return redirect()->back()->with('success', 'Data indikator berhasil dihapus.');
     }
-
+    public function edit($id)
+    {
+        $indikator = Indikator::findOrFail($id);
+        return view('indikator.create', compact('indikator'));
+    }
+    
     public function hapusSemua()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');

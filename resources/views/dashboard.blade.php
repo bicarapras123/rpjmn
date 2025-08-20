@@ -20,14 +20,18 @@
                     </p>
 
                     @if(Auth::user()->role === 'admin')
-                        <div class="mt-4 text-green-700 font-semibold">
-                            Selamat datang Admin! Anda memiliki akses penuh.
-                        </div>
-                    @elseif(Auth::user()->role === 'viewer')
-                        <div class="mt-4 text-gray-700 font-semibold">
-                            Anda login sebagai Viewer. Beberapa fitur mungkin tidak tersedia.
-                        </div>
-                    @endif
+                    <div class="mt-4 text-green-700 font-semibold">
+                        Selamat datang Admin! Anda memiliki akses penuh.
+                    </div>
+                @elseif(Auth::user()->role === 'moderator')
+                    <div class="mt-4 text-blue-700 font-semibold">
+                        Selamat datang Moderator! Anda hanya bisa memvalidasi data monitoring.
+                    </div>
+                @elseif(Auth::user()->role === 'viewer')
+                    <div class="mt-4 text-gray-700 font-semibold">
+                        Anda login sebagai Viewer. Beberapa fitur mungkin tidak tersedia.
+                    </div>
+                @endif
                 </div>
             </div>
 

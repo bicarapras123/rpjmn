@@ -33,4 +33,24 @@ class MonitoringController extends Controller
 
         return redirect()->route('monitoring.index')->with('success', 'Semua data berhasil dihapus.');
     }
+
+    public function setStatus($id, $status)
+{
+    // Hanya moderator yang boleh
+    if (auth()->user()->role !== 'moderator') {
+        abort(403, 'Akses khusus Moderator');
+    }
+
+    $indikator = \App\Models\Indikator::findOrFail($id);
+
+    // Validasi status
+    if (!in_array($status, ['approved', 'rejected'])) {
+        return redirect()->back()->with('error', 'Status tidak valid');
+    }
+
+    $indikator->status = $status;
+    $indikator->save();
+
+    return redirect()->back()->with('success', "Data berhasil divalidasi ($status)");
+}
 }

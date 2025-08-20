@@ -143,6 +143,15 @@ Route::middleware('auth')->group(function () {
     })->name('laporan.kirim');
 });
 
+/*
+|--------------------------------------------------------------------------
+| MONITORING VALIDASI (KHUSUS MODERATOR)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::put('/monitoring/{id}/set-status/{status}', [MonitoringController::class, 'setStatus'])
+        ->name('monitoring.setStatus');
+});
 
 /*
 |--------------------------------------------------------------------------
