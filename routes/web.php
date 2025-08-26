@@ -22,7 +22,6 @@ use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Auth\PasswordController;
 
-
 /*
 |--------------------------------------------------------------------------
 | Tes Kirim Email
@@ -37,16 +36,14 @@ Route::get('/tes-email', function () {
     return 'Email tes terkirim!';
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| HALAMAN UTAMA
+| Halaman Utama
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
     return view('welcome');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -71,10 +68,9 @@ Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-
 /*
 |--------------------------------------------------------------------------
-| VERIFIKASI EMAIL
+| Verifikasi Email
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -87,10 +83,9 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD & EVALUASI
+| Dashboard & Evaluasi
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -98,43 +93,43 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/evaluasi', [EvaluasiController::class, 'index'])->name('evaluasi.index');
 });
 
-
 /*
 |--------------------------------------------------------------------------
-| MONITORING (Indikator)
+| Monitoring & Indikator
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
 
-    // Halaman cetak dan hapus semua data
+    // CRUD Monitoring (biar ada monitoring.store, monitoring.update, dll)
+    Route::resource('indikator', IndikatorController::class);
+
+    // route untuk validasi indikator
+    Route::post('indikator/{id}/set-status/{status}', [IndikatorController::class, 'setStatus'])
+    ->name('indikator.setStatus');
+
+    // Monitoring diarahkan ke Indikator index
+    Route::get('/monitoring', [IndikatorController::class, 'index'])->name('monitoring.index');
+
+    // Tambahan khusus Monitoring
     Route::get('/monitoring/cetak', [MonitoringController::class, 'cetak'])->name('monitoring.cetak');
-    Route::delete('/monitoring/hapus-semua', [IndikatorController::class, 'hapusSemua'])->name('monitoring.hapusSemua');
+    Route::delete('/monitoring/hapus-semua', [MonitoringController::class, 'hapusSemua'])->name('monitoring.hapusSemua');
 
-    // CRUD Monitoring (Indikator)
-    Route::resource('monitoring', IndikatorController::class)->names([
-        'index'   => 'monitoring.index',
-        'create'  => 'monitoring.create',
-        'store'   => 'monitoring.store',
-        'edit'    => 'monitoring.edit',
-        'update'  => 'monitoring.update',
-        'destroy' => 'monitoring.destroy',
-        'show'    => 'monitoring.show',
-    ]);
+    // CRUD Indikator
+    Route::resource('indikator', IndikatorController::class);
+
+    // Kalau tetap butuh akses Indikator via URL monitoring, bisa pakai alias
+    Route::get('/indikator-monitoring', [IndikatorController::class, 'index'])->name('indikator.monitoring.index');
 });
-
 
 /*
 |--------------------------------------------------------------------------
-| FORM KIRIM EMAIL LAPORAN (KHUSUS ADMIN)
+| Laporan
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-
-    // Semua user bisa lihat laporan
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::delete('/laporan/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
 
-    // Kirim laporan hanya untuk admin
     Route::post('/laporan/kirim', function (Request $request) {
         if (Auth::user()->role !== 'admin') {
             abort(403, 'Akses khusus Admin');
@@ -145,17 +140,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| MONITORING VALIDASI (KHUSUS MODERATOR)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth'])->group(function () {
-    Route::put('/monitoring/{id}/set-status/{status}', [MonitoringController::class, 'setStatus'])
-        ->name('monitoring.setStatus');
-});
-
-/*
-|--------------------------------------------------------------------------
-| PROFILE & PASSWORD
+| Profile & Password
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {

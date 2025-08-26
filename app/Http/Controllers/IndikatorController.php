@@ -11,7 +11,7 @@ class IndikatorController extends Controller
     public function index()
     {
         $indikators = Indikator::all();
-        return view('monitoring', compact('indikators'));
+        return view('indikator.index', compact('indikators')); 
     }
 
     public function create()
@@ -33,9 +33,19 @@ class IndikatorController extends Controller
             'target' => 'nullable|numeric',
         ]);
 
-        Indikator::create($request->all());
+        // default status = null (belum divalidasi)
+        $data = $request->all();
+        $data['status'] = null;
 
-        return redirect()->route('monitoring.index')->with('success', 'Data berhasil ditambahkan.');
+        Indikator::create($data);
+
+        return redirect()->route('indikator.index')->with('success', 'Data berhasil ditambahkan.');
+    }
+
+    public function edit($id)
+    {
+        $indikator = Indikator::findOrFail($id);
+        return view('indikator.edit', compact('indikator'));
     }
 
     public function update(Request $request, Indikator $indikator)
@@ -54,27 +64,38 @@ class IndikatorController extends Controller
 
         $indikator->update($request->all());
 
-        return redirect()->route('monitoring.index')->with('success', 'Data berhasil diperbarui.');
+        return redirect()->route('indikator.index')->with('success', 'Data berhasil diperbarui.');
     }
 
-    public function destroy(Indikator $monitoring)
+    public function destroy(Indikator $indikator)
     {
-        $monitoring->delete();
+        $indikator->delete();
         return redirect()->back()->with('success', 'Data indikator berhasil dihapus.');
     }
-    public function edit($id)
-    {
-        $indikator = Indikator::findOrFail($id);
-        return view('indikator.create', compact('indikator'));
-    }
-    
+
     public function hapusSemua()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('monitorings')->delete();
         DB::table('indikators')->delete();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        return redirect()->route('monitoring.index')->with('success', 'Semua data berhasil dihapus.');
+        return redirect()->route('indikator.index')->with('success', 'Semua data berhasil dihapus.');
+    }
+
+    /**
+     * Set status indikator (approve/reject)
+     */
+    public function setStatus($id, $status)
+    {
+        $indikator = Indikator::findOrFail($id);
+
+        if (!in_array($status, ['approved', 'rejected'])) {
+            return redirect()->back()->with('error', 'Status tidak valid.');
+        }
+
+        $indikator->status = $status;
+        $indikator->save();
+
+        return redirect()->route('indikator.index')->with('success', "Indikator berhasil di-{$status}.");
     }
 }

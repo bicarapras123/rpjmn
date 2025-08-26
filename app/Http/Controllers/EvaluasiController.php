@@ -2,36 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Indikator;
 use Illuminate\Http\Request;
 
 class EvaluasiController extends Controller
 {
     public function index()
     {
-        // Pie chart: direktorat
-        $direktoratLabels = collect([
-            'Kemdikbud',
-            'DJP',
-            'Sekretariat Jenderal',
-            'Kementerian Luar Negeri',
-            'Badan Pengembangan SDM',
-            'Staf Ahli Bidang Aparatur dan Pelayanan Publik',
-            'PEPPS'
-        ]);
+        // Ambil semua data indikator
+        $indikators = Indikator::all();
 
-        // Data seimbang (karena di gambar semua potongan sama besar)
-        $direktoratCounts = collect([
-            1, 1, 1, 1, 1, 1, 1
-        ]);
+        // Hitung jumlah per direktorat
+        $direktoratLabels = $indikators->pluck('direktorat')->unique()->values();
+        $direktoratCounts = $direktoratLabels->map(function ($dir) use ($indikators) {
+            return $indikators->where('direktorat', $dir)->count();
+        });
 
-        // Bar chart: total per tahun (sesuai gambar)
+        // Hitung jumlah per tahun
         $tahun = collect([
-            2019 => 2200,
-            2020 => 1300,
-            2021 => 2500,
-            2022 => 3800
+            2019 => $indikators->sum('tahun_2019'),
+            2020 => $indikators->sum('tahun_2020'),
+            2021 => $indikators->sum('tahun_2021'),
+            2022 => $indikators->sum('tahun_2022'),
         ]);
 
-        return view('evaluasi', compact('direktoratLabels', 'direktoratCounts', 'tahun'));
+        return view('evaluasi', compact('indikators', 'direktoratLabels', 'direktoratCounts', 'tahun'));
     }
+    public function edit($id)
+{
+    $indikator = Indikator::findOrFail($id);
+    return view('indikator.edit', compact('indikator'));
+}
+
+public function update(Request $request, $id)
+{
+    $indikator = Indikator::findOrFail($id);
+    $indikator->update($request->all());
+
+    return redirect()->route('indikator.index')->with('success', 'Data berhasil diperbarui');
+}
+
 }

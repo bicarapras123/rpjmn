@@ -12,7 +12,7 @@ class MonitoringController extends Controller
     public function index()
     {
         $indikators = Indikator::all(); // ini yang ditampilkan di Blade
-        return view('monitoring.index', compact('indikators'));
+        return view('monitoring', compact('indikators'));
     }
 
     // Menampilkan halaman cetak

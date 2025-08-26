@@ -8,7 +8,7 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white p-6 rounded shadow-md">
-                <form method="POST" action="{{ route('monitoring.store') }}">
+                <form method="POST" action="{{ route('indikator.store') }}">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
