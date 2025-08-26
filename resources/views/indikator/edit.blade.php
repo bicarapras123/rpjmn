@@ -19,37 +19,43 @@
                     </div>
                 @endif
 
-                <form action="{{ route('indikator.update', $indikator->id) }}" method="POST">
+                <form action="{{ route('indikator.update', $indikator->id) }}" 
+                      method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
                     <div class="mb-4">
                         <label class="block text-gray-700">Indikator</label>
-                        <input type="text" name="indikator" value="{{ old('indikator', $indikator->indikator) }}"
+                        <input type="text" name="indikator" 
+                               value="{{ old('indikator', $indikator->indikator) }}"
                                class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-700">Direktorat</label>
-                        <input type="text" name="direktorat" value="{{ old('direktorat', $indikator->direktorat) }}"
+                        <input type="text" name="direktorat" 
+                               value="{{ old('direktorat', $indikator->direktorat) }}"
                                class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-gray-700">K/L Pelaksana</label>
-                        <input type="text" name="kl_pelaksana" value="{{ old('kl_pelaksana', $indikator->kl_pelaksana) }}"
+                        <input type="text" name="kl_pelaksana" 
+                               value="{{ old('kl_pelaksana', $indikator->kl_pelaksana) }}"
                                class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200" required>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700">Baseline</label>
-                            <input type="number" name="baseline" value="{{ old('baseline', $indikator->baseline) }}"
+                            <input type="number" name="baseline" 
+                                   value="{{ old('baseline', $indikator->baseline) }}"
                                    class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
                         <div>
                             <label class="block text-gray-700">Target</label>
-                            <input type="number" name="target" value="{{ old('target', $indikator->target) }}"
+                            <input type="number" name="target" 
+                                   value="{{ old('target', $indikator->target) }}"
                                    class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
                         </div>
                     </div>
@@ -57,26 +63,46 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700">Tahun 2019</label>
-                            <input type="number" name="tahun_2019" value="{{ old('tahun_2019', $indikator->tahun_2019) }}"
+                            <input type="number" name="tahun_2019" 
+                                   value="{{ old('tahun_2019', $indikator->tahun_2019) }}"
                                    class="w-full border rounded-md px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-gray-700">Tahun 2020</label>
-                            <input type="number" name="tahun_2020" value="{{ old('tahun_2020', $indikator->tahun_2020) }}"
+                            <input type="number" name="tahun_2020" 
+                                   value="{{ old('tahun_2020', $indikator->tahun_2020) }}"
                                    class="w-full border rounded-md px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-gray-700">Tahun 2021</label>
-                            <input type="number" name="tahun_2021" value="{{ old('tahun_2021', $indikator->tahun_2021) }}"
+                            <input type="number" name="tahun_2021" 
+                                   value="{{ old('tahun_2021', $indikator->tahun_2021) }}"
                                    class="w-full border rounded-md px-3 py-2">
                         </div>
                         <div>
                             <label class="block text-gray-700">Tahun 2022</label>
-                            <input type="number" name="tahun_2022" value="{{ old('tahun_2022', $indikator->tahun_2022) }}"
+                            <input type="number" name="tahun_2022" 
+                                   value="{{ old('tahun_2022', $indikator->tahun_2022) }}"
                                    class="w-full border rounded-md px-3 py-2">
                         </div>
                     </div>
 
+                    {{-- Upload File --}}
+                    <div class="mb-4">
+                        <label class="block text-gray-700">Upload File (Opsional)</label>
+                        <input type="file" name="file" 
+                               class="w-full border rounded-md px-3 py-2 focus:ring focus:ring-blue-200">
+
+                        @if ($indikator->file)
+                            <p class="mt-2 text-sm text-gray-600">
+                                File saat ini: 
+                                <a href="{{ asset('storage/' . $indikator->file) }}" 
+                                   class="text-blue-600 underline" target="_blank">
+                                    Lihat File
+                                </a>
+                            </p>
+                        @endif
+                    </div>
 
                     <div class="flex justify-between">
                         <a href="{{ route('indikator.index') }}" 

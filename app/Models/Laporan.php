@@ -14,5 +14,6 @@ class Laporan extends Model
         'unit',
         'email',
         'isi',
+        'file',
     ];
 }

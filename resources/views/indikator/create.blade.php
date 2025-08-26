@@ -8,7 +8,8 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white p-6 rounded shadow-md">
-                <form method="POST" action="{{ route('indikator.store') }}">
+                {{-- tambahkan enctype agar bisa upload file --}}
+                <form method="POST" action="{{ route('indikator.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,6 +65,13 @@
                             <x-input-label for="target" value="Target" />
                             <x-text-input id="target" class="block mt-1 w-full" type="number" step="any" name="target" :value="old('target')" required />
                             <x-input-error :messages="$errors->get('target')" class="mt-2" />
+                        </div>
+
+                        {{-- Tambahan Upload File --}}
+                        <div class="md:col-span-2">
+                            <x-input-label for="file" value="Upload File (PDF/DOCX/Excel)" />
+                            <input id="file" type="file" name="file" class="block mt-1 w-full border rounded p-2" />
+                            <x-input-error :messages="$errors->get('file')" class="mt-2" />
                         </div>
                     </div>
 

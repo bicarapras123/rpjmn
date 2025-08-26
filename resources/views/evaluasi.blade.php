@@ -6,7 +6,7 @@
             <!-- Tombol Cetak -->
             <button onclick="printPage()" 
                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-medium shadow print:hidden">
-                Cetak Laporan
+                Cetak Evaluasi
             </button>
         </div>
     </x-slot>

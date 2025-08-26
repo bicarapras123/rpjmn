@@ -19,6 +19,8 @@ class Indikator extends Model
         'tahun_2021',
         'tahun_2022',
         'target',
+        'status',
+        'file',
     ];
 
     public function monitoring()

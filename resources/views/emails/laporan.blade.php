@@ -10,5 +10,13 @@
     <p><strong>Unit:</strong> {{ $unit }}</p>
     <p><strong>Email Tujuan:</strong> {{ $email }}</p>
     <p><strong>Isi:</strong><br>{{ $isi }}</p>
+
+    @if (!empty($file))
+        <p><strong>Lampiran:</strong> 
+            <a href="{{ asset('storage/' . $file) }}" target="_blank">
+                Klik di sini untuk melihat file
+            </a>
+        </p>
+    @endif
 </body>
 </html>

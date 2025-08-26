@@ -3,13 +3,20 @@
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Monitoring Indikator</h2>
             
-            {{-- Tombol tambah hanya untuk admin --}}
-            @if(Auth::user()->role === 'admin')
-                <a href="{{ route('indikator.create') }}" 
-                   class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
-                    + Tambah Indikator
-                </a>
-            @endif
+            <div class="flex space-x-2">
+                {{-- Tombol tambah hanya untuk admin --}}
+                @if(Auth::user()->role === 'admin')
+                    <a href="{{ route('indikator.create') }}" 
+                       class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
+                        + Tambah Indikator
+                    </a>
+                @endif
+
+            <!-- Tombol Cetak -->
+            <button onclick="printPage()" 
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm font-medium shadow print:hidden">
+                Cetak Monitoring
+            </button>
         </div>
     </x-slot>
 
@@ -25,7 +32,7 @@
                 @endif
 
                 {{-- Legend Warna --}}
-                <div class="mb-4 p-3 bg-gray-100 rounded shadow text-sm">
+                <div class="mb-4 p-3 bg-gray-100 rounded shadow text-sm no-print">
                     <span class="inline-block w-4 h-4 bg-green-200 border mr-2"></span> 
                     <span class="mr-4">Approved (Tercapai / Disetujui)</span>
 
@@ -33,7 +40,7 @@
                     <span class="mr-4">Rejected (Tidak Tercapai / Ditolak)</span>
 
                     <span class="inline-block w-4 h-4 bg-gray-200 border mr-2"></span> 
-                    <span>Belum divalidasi</span>
+                    <span>Status hanya bisa divalidasi oleh moderator</span>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -50,8 +57,9 @@
                                 <th class="px-4 py-3 border border-blue-300">2021</th>
                                 <th class="px-4 py-3 border border-blue-300">2022</th>
                                 <th class="px-4 py-3 border border-blue-300">Target</th>
+                                <th class="px-4 py-3 border border-blue-300">Lampiran</th>
                                 <th class="px-4 py-3 border border-blue-300">Status</th>
-                                <th class="px-4 py-3 border border-blue-300 text-center">Aksi</th>
+                                <th class="px-4 py-3 border border-blue-300 text-center no-print">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm text-gray-700">
@@ -68,6 +76,17 @@
                                     <td class="px-4 py-2 border border-blue-100 text-center">{{ $indikator->tahun_2022 }}</td>
                                     <td class="px-4 py-2 border border-blue-100 text-center font-semibold">{{ $indikator->target }}</td>
                                     <td class="px-4 py-2 border border-blue-100 text-center">
+                                        @if($indikator->file)
+                                            <a href="{{ asset('storage/' . $indikator->file) }}" 
+                                               target="_blank" 
+                                               class="text-blue-600 underline">
+                                                Lihat File
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2 border border-blue-100 text-center">
                                         <span class="px-2 py-1 rounded text-xs font-semibold
                                             @if($indikator->status === 'approved')
                                                 bg-green-100 text-green-700 border border-green-300
@@ -79,7 +98,7 @@
                                             {{ ucfirst($indikator->status ?? 'Not yet') }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-2 border border-blue-100 text-center space-x-1">
+                                    <td class="px-4 py-2 border border-blue-100 text-center space-x-1 no-print">
                                         @if(Auth::user()->role === 'admin')
                                             <a href="{{ route('indikator.edit', $indikator->id) }}" 
                                                class="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 text-xs shadow">
@@ -119,7 +138,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="12" class="text-center py-4 text-gray-500">
+                                    <td colspan="13" class="text-center py-4 text-gray-500">
                                         Belum ada data indikator
                                     </td>
                                 </tr>
@@ -130,4 +149,26 @@
             </div>
         </div>
     </div>
+
+    </script>
+
+<!-- Print Script -->
+<script>
+    function printPage() {
+        window.print();
+    }
+</script>
+
+<!-- Print Style -->
+<style>
+    @media print {
+        .print\:hidden {
+            display: none !important;
+        }
+        body {
+            background-color: white;
+        }
+    }
+</style>
+
 </x-app-layout>
