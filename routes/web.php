@@ -131,8 +131,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/laporan/{id}', [LaporanController::class, 'destroy'])->name('laporan.destroy');
 
     Route::post('/laporan/kirim', function (Request $request) {
-        if (Auth::user()->role !== 'admin') {
-            abort(403, 'Akses khusus Admin');
+        if (!in_array(Auth::user()->role, ['admin', 'viewer'])) {
+            abort(403, 'Akses hanya untuk Admin & Viewer');
         }
         return app(LaporanController::class)->kirim($request);
     })->name('laporan.kirim');

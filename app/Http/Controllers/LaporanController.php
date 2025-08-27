@@ -23,22 +23,30 @@ class LaporanController extends Controller
         return view('laporan', compact('laporans'));
     }
 
- public function destroy($id)
-{
-    $laporan = Laporan::findOrFail($id);
-
-    // Kalau ada file, hapus dari storage
-    if ($laporan->file) {
-        \Storage::disk('public')->delete($laporan->file);
+    public function destroy($id)
+    {
+        // Batasi hanya admin & viewer
+        if (!in_array(auth()->user()->role, ['admin', 'viewer'])) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus laporan.');
+        }
+    
+        $laporan = Laporan::findOrFail($id);
+    
+        if ($laporan->file) {
+            \Storage::disk('public')->delete($laporan->file);
+        }
+    
+        $laporan->delete();
+    
+        return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
     }
-
-    $laporan->delete();
-
-    return redirect()->back()->with('success', 'Laporan berhasil dihapus.');
-}
 
     public function kirim(Request $request)
     {
+            // Batasi hanya admin & viewer
+    if (!in_array(auth()->user()->role, ['admin', 'viewer'])) {
+        abort(403, 'Anda tidak memiliki akses untuk mengirim laporan.');
+    }
         $validated = $request->validate([
             'nama'  => 'required|string|max:255',
             'unit'  => 'required|string|max:255',
