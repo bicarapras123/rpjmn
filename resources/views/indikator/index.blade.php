@@ -1,7 +1,14 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
+<x-slot name="header">
+    <div class="flex justify-between items-center">
+        @if (Auth::user()->role === 'viewer')
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Monitoring Indikator</h2>
+        @elseif (Auth::user()->role === 'admin')
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Input Indikator</h2>
+        @elseif (Auth::user()->role === 'moderator')
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Validasi Indikator</h2>
+        @endif
+
             
             <div class="flex space-x-2">
                 {{-- Tombol tambah hanya untuk admin --}}

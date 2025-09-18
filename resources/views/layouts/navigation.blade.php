@@ -15,7 +15,7 @@
                         Monitoring
                     </x-nav-link>
                     <x-nav-link :href="route('evaluasi.index')" :active="request()->routeIs('evaluasi.*')">
-                        Evaluasi
+                        Evaluasi Indikator
                     </x-nav-link>
                     <x-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
                         Laporan
