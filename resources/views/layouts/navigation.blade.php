@@ -12,7 +12,13 @@
                         Dashboard
                     </x-nav-link>
                     <x-nav-link :href="route('monitoring.index')" :active="request()->routeIs('monitoring.*')">
-                        Monitoring
+                        @if(auth()->user()->role === 'viewer')
+                            Monitoring Indikator
+                        @elseif(auth()->user()->role === 'admin')
+                            Input Indikator
+                        @elseif(auth()->user()->role === 'moderator')
+                            Validasi Indikator
+                        @endif
                     </x-nav-link>
                     <x-nav-link :href="route('evaluasi.index')" :active="request()->routeIs('evaluasi.*')">
                         Evaluasi Indikator
