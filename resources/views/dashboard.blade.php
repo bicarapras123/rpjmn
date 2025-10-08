@@ -20,33 +20,33 @@
                     </p>
 
                     @if(Auth::user()->role === 'admin')
-                    <div class="mt-4 text-green-700 font-semibold">
-                        Selamat datang Admin! Anda memiliki akses penuh.
-                    </div>
-                @elseif(Auth::user()->role === 'moderator')
-                    <div class="mt-4 text-blue-700 font-semibold">
-                        Selamat datang Moderator! Anda hanya bisa memvalidasi data monitoring.
-                    </div>
-                @elseif(Auth::user()->role === 'viewer')
-                    <div class="mt-4 text-gray-700 font-semibold">
-                        Anda login sebagai Viewer. Beberapa fitur mungkin tidak tersedia.
-                    </div>
-                @endif
+                        <div class="mt-4 text-green-700 font-semibold">
+                            Selamat datang Admin! Anda memiliki akses penuh.
+                        </div>
+                    @elseif(Auth::user()->role === 'moderator')
+                        <div class="mt-4 text-blue-700 font-semibold">
+                            Selamat datang Moderator! Anda hanya bisa memvalidasi data monitoring.
+                        </div>
+                    @elseif(Auth::user()->role === 'viewer')
+                        <div class="mt-4 text-gray-700 font-semibold">
+                            Anda login sebagai Viewer. Beberapa fitur mungkin tidak tersedia.
+                        </div>
+                    @endif
                 </div>
             </div>
 
-            <!-- Grafik -->
+            <!-- Grafik Statistik -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Grafik Pie -->
+                <!-- Grafik Garis Per Direktorat -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold mb-4">Grafik Pie Per Direktorat</h3>
-                    <canvas id="pieChart"></canvas>
+                    <h3 class="text-lg font-semibold mb-4">Statistik Garis Per Direktorat</h3>
+                    <canvas id="lineDirektorat"></canvas>
                 </div>
 
-                <!-- Grafik Batang -->
+                <!-- Grafik Garis Total Tiap Tahun -->
                 <div class="bg-white p-6 rounded-lg shadow-sm">
-                    <h3 class="text-lg font-semibold mb-4">Grafik Batang Total Tiap Tahun</h3>
-                    <canvas id="barChart"></canvas>
+                    <h3 class="text-lg font-semibold mb-4">Statistik Garis Total Tiap Tahun</h3>
+                    <canvas id="lineTahun"></canvas>
                 </div>
             </div>
         </div>
@@ -54,33 +54,58 @@
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        const pieCtx = document.getElementById('pieChart').getContext('2d');
-        const pieChart = new Chart(pieCtx, {
-            type: 'pie',
+        // === Statistik Garis Per Direktorat ===
+        const ctxDirektorat = document.getElementById('lineDirektorat').getContext('2d');
+        const lineDirektorat = new Chart(ctxDirektorat, {
+            type: 'line',
             data: {
                 labels: @json($direktoratLabels),
                 datasets: [{
                     label: 'Jumlah Data per Direktorat',
                     data: @json($direktoratCounts),
-                    backgroundColor: [
-                        'rgba(54, 162, 235, 0.7)',
-                        'rgba(255, 99, 132, 0.7)',
-                        'rgba(255, 206, 86, 0.7)',
-                        'rgba(75, 192, 192, 0.7)',
-                        'rgba(153, 102, 255, 0.7)',
-                        'rgba(255, 159, 64, 0.7)',
-                        'rgba(199, 199, 199, 0.7)'
-                    ],
-                    borderColor: 'rgba(255,255,255,1)',
-                    borderWidth: 1
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointRadius: 4
                 }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Jumlah Data per Direktorat',
+                        font: { size: 16 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Jumlah'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Direktorat'
+                        }
+                    }
+                }
             }
         });
 
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        const barChart = new Chart(barCtx, {
-            type: 'bar',
+        // === Statistik Garis Total Tiap Tahun ===
+        const ctxTahun = document.getElementById('lineTahun').getContext('2d');
+        const lineTahun = new Chart(ctxTahun, {
+            type: 'line',
             data: {
                 labels: ['2019', '2020', '2021', '2022'],
                 datasets: [{
@@ -91,18 +116,33 @@
                         {{ $tahun['2021'] }},
                         {{ $tahun['2022'] }}
                     ],
-                    backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderWidth: 2,
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+                    pointRadius: 4
                 }]
             },
             options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        text: 'Total Nilai per Tahun',
+                        font: { size: 16 }
+                    }
+                },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
+                        title: { display: true, text: 'Nilai Total' },
+                        ticks: { precision: 0 }
+                    },
+                    x: {
+                        title: { display: true, text: 'Tahun' }
                     }
                 }
             }

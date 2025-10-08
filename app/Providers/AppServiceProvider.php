@@ -2,23 +2,28 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+class RouteServiceProvider extends ServiceProvider
 {
     /**
-     * Register any application services.
+     * Path default setelah login/register.
      */
-    public function register(): void
-    {
-        //
-    }
+    public const HOME = '/dashboard';
 
     /**
-     * Bootstrap any application services.
+     * Daftarkan semua routes aplikasi.
      */
     public function boot(): void
     {
-        //
+        $this->routes(function () {
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
+
+            Route::middleware('api')
+                ->prefix('api')
+                ->group(base_path('routes/api.php'));
+        });
     }
 }
